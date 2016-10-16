@@ -197,7 +197,7 @@ function LPB:AddOptions()
 					tt_options = {
 						order = 2,
 						type = "group",
-						name = ["Show"],
+						name = L["Show"],
 						guiInline = true,
 						args = {
 							ttst = {
