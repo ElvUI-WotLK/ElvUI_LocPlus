@@ -1,7 +1,7 @@
 ﻿-- English localization file for itIT
-local AceLocale = LibStub:GetLibrary("AceLocale-3.0");
-local L = AceLocale:NewLocale("ElvUI", "itIT");
-if not L then return; end
+local AceLocale = LibStub:GetLibrary("AceLocale-3.0")
+local L = AceLocale:NewLocale("ElvUI", "itIT")
+if not L then return end
 
 L["Adds 2 digits in the coords"] = "Adds 2 digits in the coords" -- Requires localization
 L["Adds 6 pixels at the Main Location Panel height."] = "Adds 6 pixels at the Main Location Panel height." -- Requires localization
@@ -38,6 +38,7 @@ L["Enable/Disable the coords for area dungeons and recommended dungeon entrances
 L["Enable/Disable the currencies, on Tooltip."] = "Enable/Disable the currencies, on Tooltip." -- Requires localization
 L["Enable/Disable the professions, on Tooltip."] = "Enable/Disable the professions, on Tooltip." -- Requires localization
 L["Enable/Disable transparent layout."] = "Enable/Disable transparent layout." -- Requires localization
+L["Hide Blizzard Zone Text"] = true
 L["Hide capped"] = "Hide capped" -- Requires localization
 L["Hide PvP"] = "Hide PvP" -- Requires localization
 L["Hide Raid"] = "Hide Raid" -- Requires localization

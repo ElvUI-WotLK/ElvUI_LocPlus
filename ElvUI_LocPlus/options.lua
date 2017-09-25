@@ -1,7 +1,11 @@
-local E, L, V, P, G = unpack(ElvUI);
+local E, L, V, P, G = unpack(ElvUI)
 local LPB = E:GetModule("LocationPlus")
 
-local format = string.format;
+local format = string.format
+local OTHER, LEVEL_RANGE, EMBLEM_SYMBOL, TRADE_SKILLS, FILTERS = OTHER, LEVEL_RANGE, EMBLEM_SYMBOL, TRADE_SKILLS, FILTERS
+local COLOR, CLASS_COLORS, CUSTOM, COLOR_PICKER = COLOR, CLASS_COLORS, CUSTOM, COLOR_PICKER
+
+-- GLOBALS: AceGUIWidgetLSMlists
 
 -- Defaults
 P["locplus"] = {
@@ -10,14 +14,20 @@ P["locplus"] = {
 	["combat"] = false,
 	["timer"] = 0.5,
 	["dig"] = true,
+	["displayOther"] = "RLEVEL",
+	["showicon"] = true,
 	["hidecoords"] = false,
+	["zonetext"] = true,
 -- Tooltip
 	["tt"] = true,
 	["ttcombathide"] = true,
 	["tthint"] = true,
 	["ttst"] = true,
+	["ttlvl"] = true,
+	["ttinst"] = true,
+	["ttreczones"] = true,
+	["ttrecinst"] = true,
 	["ttcoords"] = true,
-	["curr"] = true,
 -- Filters
 	["tthideraid"] = false,
 	["tthidepvp"] = false,
@@ -44,13 +54,11 @@ P["locplus"] = {
 	["lpfontflags"] = "NONE",
 -- Init
 	["LoginMsg"] = true,
-};
+}
 
 local newsign = "|TInterface\\OptionsFrame\\UI-OptionsFrame-NewFeatureIcon:14:14|t"
 
-local FISH_ICON = "|TInterface\\AddOns\\ElvUI_LocPlus\\media\\fish.tga:14:14|t"
-local PET_ICON = "|TInterface\\AddOns\\ElvUI_LocPlus\\media\\pet.tga:14:14|t"
-local LEVEL_ICON = "|TInterface\\AddOns\\ElvUI_LocPlus\\media\\levelup.tga:14:14|t"
+local LEVEL_ICON = "|TInterface\\AddOns\\ElvUI_LocPlus\\media\\levelup.tga:22:22|t"
 
 function LPB:AddOptions()
 	E.Options.args.locplus = {
@@ -62,7 +70,7 @@ function LPB:AddOptions()
 				order = 1,
 				type = "header",
 				name = L["Location Plus "]..format("v|cff33ffff%s|r",LPB.version)..L[" by Benik (EU-Emerald Dream)"],
-			},		
+			},
 			desc = {
 				order = 2,
 				type = "description",
@@ -72,37 +80,45 @@ function LPB:AddOptions()
 				order = 3,
 				type = "description",
 				name = "",
-			},		
+			},
 			toptop = {
 				order = 4,
 				type = "group",
 				name = L["General"],
 				guiInline = true,
 				args = {
+					LoginMsg = {
+							order = 1,
+							name = L["Login Message"],
+							desc = L["Enable/Disable the Login Message"],
+							type = "toggle",
+							width = "full",
+							get = function(info) return E.db.locplus[ info[#info] ] end,
+							set = function(info, value) E.db.locplus[ info[#info] ] = value end,
+					},
 					combat = {
-						order = 1,
+						order = 2,
 						name = L["Combat Hide"],
 						desc = L["Show/Hide all panels when in combat"],
 						type = "toggle",
 						get = function(info) return E.db.locplus[ info[#info] ] end,
-						set = function(info, value) E.db.locplus[ info[#info] ] = value; end,					
+						set = function(info, value) E.db.locplus[ info[#info] ] = value end,
 					},
 					timer = {
-						order = 2,
+						order = 3,
 						name = L["Update Timer"],
 						desc = L["Adjust coords updates (in seconds) to avoid cpu load. Bigger number = less cpu load. Requires reloadUI."],
 						type = "range",
 						min = 0.05, max = 1, step = 0.05,
 						get = function(info) return E.db.locplus[ info[#info] ] end,
-						set = function(info, value) E.db.locplus[ info[#info] ] = value; E:StaticPopup_Show("PRIVATE_RL"); end,					
+						set = function(info, value) E.db.locplus[ info[#info] ] = value E:StaticPopup_Show("PRIVATE_RL") end,
 					},
-					LoginMsg = {
-							order = 3,
-							name = L["Login Message"],
-							desc = L["Enable/Disable the Login Message"],
-							type = "toggle",
-							get = function(info) return E.db.locplus[ info[#info] ] end,
-							set = function(info, value) E.db.locplus[ info[#info] ] = value; end,                                  
+					zonetext = {
+						order = 4,
+						name = L["Hide Blizzard Zone Text"],
+						type = "toggle",
+						get = function(info) return E.db.locplus[ info[#info] ] end,
+						set = function(info, value) E.db.locplus[ info[#info] ] = value LPB:ToggleBlizZoneText() end,
 					},
 				},
 			},
@@ -117,36 +133,56 @@ function LPB:AddOptions()
 						name = L["Zone and Subzone"],
 						desc = L["Displays the main zone and the subzone in the location panel"],
 						type = "toggle",
-						width = "full",	
+						width = "full",
 						get = function(info) return E.db.locplus[ info[#info] ] end,
-						set = function(info, value) E.db.locplus[ info[#info] ] = value; end,					
+						set = function(info, value) E.db.locplus[ info[#info] ] = value end,
 					},
 					hidecoords = {
 						order = 2,
 						name = L["Hide Coords"]..newsign,
 						desc = L["Show/Hide the coord frames"],
 						type = "toggle",
-						width = "full",	
+						width = "full",
 						get = function(info) return E.db.locplus[ info[#info] ] end,
-						set = function(info, value) E.db.locplus[ info[#info] ] = value; LPB:HideCoords() end,					
+						set = function(info, value) E.db.locplus[ info[#info] ] = value LPB:HideCoords() end,
 					},
 					dig = {
 						order = 3,
 						name = L["Detailed Coords"],
 						desc = L["Adds 2 digits in the coords"],
 						type = "toggle",
-						width = "full",	
+						width = "full",
 						get = function(info) return E.db.locplus[ info[#info] ] end,
-						set = function(info, value) E.db.locplus[ info[#info] ] = value; LPB:CoordsDigit() end,					
-					},				
+						set = function(info, value) E.db.locplus[ info[#info] ] = value LPB:CoordsDigit() end,
+					},
+					displayOther = {
+						order = 4,
+						name = OTHER,
+						type = "select",
+						desc = L["Show additional info in the Location Panel."],
+							values = {
+								["NONE"] = L["None"],
+								["RLEVEL"] = LEVEL_ICON.." "..LEVEL_RANGE,
+							},
+						get = function(info) return E.db.locplus[ info[#info] ] end,
+						set = function(info, value) E.db.locplus[ info[#info] ] = value end,
+					},
+					showicon = {
+						order = 5,
+						name = EMBLEM_SYMBOL,
+						type = "toggle",
+						disabled = function() return E.db.locplus.displayOther == "NONE" end,
+						get = function(info) return E.db.locplus[ info[#info] ] end,
+						set = function(info, value) E.db.locplus[ info[#info] ] = value end,
+					},
 					mouseover = {
 						order = 6,
 						name = L["Mouse Over"],
 						desc = L["The frame is not shown unless you mouse over the frame."],
 						type = "toggle",
-						width = "full",	
+						width = "full",
 						get = function(info) return E.db.locplus[ info[#info] ] end,
-						set = function(info, value) E.db.locplus[ info[#info] ] = value; LPB:MouseOver() end,					
+						set = function(info, value) E.db.locplus[ info[#info] ] = value LPB:MouseOver() end,
 					},
 					malpha = {
 						order = 7,
@@ -156,8 +192,8 @@ function LPB:AddOptions()
 						min = 0, max = 1, step = 0.1,
 						disabled = function() return not E.db.locplus.mouseover end,
 						get = function(info) return E.db.locplus[ info[#info] ] end,
-						set = function(info, value) E.db.locplus[ info[#info] ] = value; LPB:MouseOver() end,
-					},			
+						set = function(info, value) E.db.locplus[ info[#info] ] = value LPB:MouseOver() end,
+					},
 				},
 			},
 			gen_tt = {
@@ -165,14 +201,14 @@ function LPB:AddOptions()
 				type = "group",
 				name = L["Tooltip"],
 				get = function(info) return E.db.locplus[ info[#info] ] end,
-				set = function(info, value) E.db.locplus[ info[#info] ] = value; end,	
+				set = function(info, value) E.db.locplus[ info[#info] ] = value end,
 				args = {
 					tt_grp = {
 						order = 1,
 						type = "group",
 						name = L["Tooltip"],
 						guiInline = true,
-						args = {				
+						args = {
 							tt = {
 								order = 1,
 								name = L["Show/Hide tooltip"],
@@ -183,14 +219,14 @@ function LPB:AddOptions()
 								name = L["Combat Hide"],
 								desc = L["Hide tooltip while in combat."],
 								type = "toggle",
-								disabled = function() return not E.db.locplus.tt end,			
+								disabled = function() return not E.db.locplus.tt end,
 							},
 							tthint = {
 								order = 3,
 								name = L["Show Hints"],
 								desc = L["Enable/Disable hints on Tooltip."],
 								type = "toggle",
-								disabled = function() return not E.db.locplus.tt end,			
+								disabled = function() return not E.db.locplus.tt end,
 							},
 						},
 					},
@@ -202,31 +238,53 @@ function LPB:AddOptions()
 						args = {
 							ttst = {
 								order = 1,
-								name = STATUS,
+								name = L["Status"],
 								desc = L["Enable/Disable status on Tooltip."],
 								type = "toggle",
 								width = "full",
-								disabled = function() return not E.db.locplus.tt end,			
+								disabled = function() return not E.db.locplus.tt end,
+							},
+							ttlvl = {
+								order = 2,
+								name = LEVEL_RANGE,
+								desc = L["Enable/Disable level range on Tooltip."],
+								type = "toggle",
+								disabled = function() return not E.db.locplus.tt end,
 							},
 							spacer2 = {
-								order = 5,
+								order = 3,
 								type = "description",
 								width = "full",
 								name = "",
 							},
-							spacer3 = {
-								order = 10,
-								type = "description",
-								width = "full",
-								name = "",
-							},	
-							curr = {
-								order = 11,
-								name = CURRENCY,
-								desc = L["Enable/Disable the currencies, on Tooltip."],
+							ttreczones = {
+								order = 4,
+								name = L["Recommended Zones"],
+								desc = L["Enable/Disable recommended zones on Tooltip."],
 								type = "toggle",
 								width = "full",
-								disabled = function() return not E.db.locplus.tt end,			
+								disabled = function() return not E.db.locplus.tt end,
+							},
+							ttinst = {
+								order = 5,
+								name = L["Zone Dungeons"],
+								desc = L["Enable/Disable dungeons in the zone, on Tooltip."],
+								type = "toggle",
+								disabled = function() return not E.db.locplus.tt end,
+							},
+							ttrecinst = {
+								order = 6,
+								name = L["Recommended Dungeons"],
+								desc = L["Enable/Disable recommended dungeons on Tooltip."],
+								type = "toggle",
+								disabled = function() return not E.db.locplus.tt end,
+							},
+							ttcoords = {
+								order = 7,
+								name = L["with Entrance Coords"],
+								desc = L["Enable/Disable the coords for area dungeons and recommended dungeon entrances, on Tooltip."],
+								type = "toggle",
+								disabled = function() return not E.db.locplus.tt or not E.db.locplus.ttrecinst end,
 							},
 						},
 					},
@@ -236,7 +294,7 @@ function LPB:AddOptions()
 						name = FILTERS,
 						guiInline = true,
 						get = function(info) return E.db.locplus[ info[#info] ] end,
-						set = function(info, value) E.db.locplus[ info[#info] ] = value; end,	
+						set = function(info, value) E.db.locplus[ info[#info] ] = value end,
 						args = {
 							tthideraid = {
 								order = 1,
@@ -266,7 +324,7 @@ function LPB:AddOptions()
 						type = "group",
 						name = L["Layout"],
 						guiInline = true,
-						args = {	
+						args = {
 							shadow = {
 								order = 1,
 								name = L["Shadows"],
@@ -274,7 +332,7 @@ function LPB:AddOptions()
 								type = "toggle",
 								disabled = function() return not E.db.locplus.noback end,
 								get = function(info) return E.db.locplus[ info[#info] ] end,
-								set = function(info, value) E.db.locplus[ info[#info] ] = value; LPB:ShadowPanels(); end,					
+								set = function(info, value) E.db.locplus[ info[#info] ] = value LPB:ShadowPanels() end,
 							},
 							trans = {
 								order = 2,
@@ -283,7 +341,7 @@ function LPB:AddOptions()
 								type = "toggle",
 								disabled = function() return not E.db.locplus.noback end,
 								get = function(info) return E.db.locplus[ info[#info] ] end,
-								set = function(info, value) E.db.locplus[ info[#info] ] = value; LPB:TransparentPanels() end,	
+								set = function(info, value) E.db.locplus[ info[#info] ] = value LPB:TransparentPanels() end,
 							},
 							noback = {
 								order = 3,
@@ -291,8 +349,8 @@ function LPB:AddOptions()
 								desc = L["Hides all panels background so you can place them on ElvUI's top or bottom panel."],
 								type = "toggle",
 								get = function(info) return E.db.locplus[ info[#info] ] end,
-								set = function(info, value) E.db.locplus[ info[#info] ] = value; LPB:TransparentPanels(); LPB:ShadowPanels(); end,	
-							},							
+								set = function(info, value) E.db.locplus[ info[#info] ] = value LPB:TransparentPanels() LPB:ShadowPanels() end,
+							},
 						},
 					},
 					locpanel = {
@@ -309,7 +367,7 @@ function LPB:AddOptions()
 								width = "full",
 								disabled = function() return not E.db.locplus.noback end,
 								get = function(info) return E.db.locplus[ info[#info] ] end,
-								set = function(info, value) E.db.locplus[ info[#info] ] = value; LPB:DTHeight() end,	
+								set = function(info, value) E.db.locplus[ info[#info] ] = value LPB:DTHeight() end,
 							},
 							lpauto = {
 								order = 2,
@@ -317,8 +375,8 @@ function LPB:AddOptions()
 								name = L["Auto width"],
 								desc = L["Auto resized Location Panel."],
 								get = function(info) return E.db.locplus[ info[#info] ] end,
-								set = function(info, value) E.db.locplus[ info[#info] ] = value; E.db.locplus.trunc = false; end,
-							},	
+								set = function(info, value) E.db.locplus[ info[#info] ] = value E.db.locplus.trunc = false end,
+							},
 							lpwidth = {
 								order = 3,
 								type = "range",
@@ -327,7 +385,7 @@ function LPB:AddOptions()
 								min = 100, max = 300, step = 1,
 								disabled = function() return E.db.locplus.lpauto end,
 								get = function(info) return E.db.locplus[ info[#info] ] end,
-								set = function(info, value) E.db.locplus[ info[#info] ] = value; end,
+								set = function(info, value) E.db.locplus[ info[#info] ] = value end,
 							},
 							trunc = {
 								order = 4,
@@ -336,7 +394,7 @@ function LPB:AddOptions()
 								desc = L["Truncates the text rather than auto enlarge the location panel when the text is bigger than the panel."],
 								disabled = function() return E.db.locplus.lpauto end,
 								get = function(info) return E.db.locplus[ info[#info] ] end,
-								set = function(info, value) E.db.locplus[ info[#info] ] = value; end,
+								set = function(info, value) E.db.locplus[ info[#info] ] = value end,
 							},
 							customColor = {
 								order = 5,
@@ -348,7 +406,7 @@ function LPB:AddOptions()
 									[3] = CUSTOM,
 								},
 								get = function(info) return E.db.locplus[ info[#info] ] end,
-								set = function(info, value) E.db.locplus[ info[#info] ] = value; end,
+								set = function(info, value) E.db.locplus[ info[#info] ] = value end,
 							},
 							userColor = {
 								order = 6,
@@ -383,7 +441,7 @@ function LPB:AddOptions()
 									[3] = CUSTOM,
 								},
 								get = function(info) return E.db.locplus[ info[#info] ] end,
-								set = function(info, value) E.db.locplus[ info[#info] ] = value; LPB:CoordsColor() end,
+								set = function(info, value) E.db.locplus[ info[#info] ] = value LPB:CoordsColor() end,
 							},
 							userCoordsColor = {
 								order = 2,
@@ -397,7 +455,7 @@ function LPB:AddOptions()
 								set = function(info, r, g, b)
 									local t = E.db.locplus[ info[#info] ]
 									t.r, t.g, t.b = r, g, b
-									LPB:CoordsColor() 
+									LPB:CoordsColor()
 								end,
 							},
 							dig = {
@@ -406,7 +464,7 @@ function LPB:AddOptions()
 								desc = L["Adds 2 digits in the coords"],
 								type = "toggle",
 								get = function(info) return E.db.locplus[ info[#info] ] end,
-								set = function(info, value) E.db.locplus[ info[#info] ] = value; LPB:CoordsDigit() end,					
+								set = function(info, value) E.db.locplus[ info[#info] ] = value LPB:CoordsDigit() end,
 							},
 						},
 					},
@@ -423,7 +481,7 @@ function LPB:AddOptions()
 								desc = L["Adjust the DataTexts Width."],
 								min = 70, max = 200, step = 1,
 								get = function(info) return E.db.locplus[ info[#info] ] end,
-								set = function(info, value) E.db.locplus[ info[#info] ] = value; LPB:DTWidth() end,
+								set = function(info, value) E.db.locplus[ info[#info] ] = value LPB:DTWidth() end,
 							},
 							dtheight = {
 								order = 2,
@@ -432,8 +490,8 @@ function LPB:AddOptions()
 								desc = L["Adjust All Panels Height."],
 								min = 10, max = 32, step = 1,
 								get = function(info) return E.db.locplus[ info[#info] ] end,
-								set = function(info, value) E.db.locplus[ info[#info] ] = value; LPB:DTHeight() end,
-							},		
+								set = function(info, value) E.db.locplus[ info[#info] ] = value LPB:DTHeight() end,
+							},
 						},
 					},
 					font = {
@@ -442,7 +500,7 @@ function LPB:AddOptions()
 						name = L["Fonts"],
 						guiInline = true,
 						get = function(info) return E.db.locplus[ info[#info] ] end,
-						set = function(info, value) E.db.locplus[ info[#info] ] = value; LPB:ChangeFont(); end,
+						set = function(info, value) E.db.locplus[ info[#info] ] = value LPB:ChangeFont() end,
 						args = {
 							lpfont = {
 								type = "select", dialogControl = "LSM30_Font",
@@ -473,6 +531,6 @@ function LPB:AddOptions()
 					},
 				},
 			},
-		},					
+		},
 	}
 end

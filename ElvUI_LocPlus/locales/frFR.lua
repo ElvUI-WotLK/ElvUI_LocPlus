@@ -1,6 +1,6 @@
-﻿local AceLocale = LibStub:GetLibrary("AceLocale-3.0");
-local L = AceLocale:NewLocale("ElvUI", "frFR");
-if not L then return; end
+﻿local AceLocale = LibStub:GetLibrary("AceLocale-3.0")
+local L = AceLocale:NewLocale("ElvUI", "frFR")
+if not L then return end
 -- Credits: Onii & Ckeurk, Updated by Alex, Lesgalapagos
 L["Adds 2 digits in the coords"] = "Ajoute 2 chiffres dans les coordonnées"
 L["Adds 6 pixels at the Main Location Panel height."] = "Ajoute 6 pixels à la hauteur du panneau de localisation principal."
@@ -36,7 +36,8 @@ L["Enable/Disable the coords for area dungeons and recommended dungeon entrances
 L["Enable/Disable the currencies, on Tooltip."] = "Activer/Désactiver la monnaie dans le Tooltip." -- Needs review
 L["Enable/Disable the professions, on Tooltip."] = "Activer/Désactiver les professions dans le Tooltip." -- Needs review
 L["Enable/Disable transparent layout."] = "Activer / désactiver l'agencement avec la transparence."
--- L["Hide capped"] = ""
+L["Hide Blizzard Zone Text"] = true
+L["Hide capped"] = true
 L["Hide PvP"] = "Cacher PvP"
 L["Hide Raid"] = "Cacher Raid"
 L["Hides all panels background so you can place them on ElvUI's top or bottom panel."] = "Cache le fond des panneaux, vous pouvez ainsi les placer en haut ou en bas des panneaux d'ElvUI's" -- Needs review

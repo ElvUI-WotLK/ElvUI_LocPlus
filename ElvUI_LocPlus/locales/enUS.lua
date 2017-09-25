@@ -1,7 +1,7 @@
 ﻿-- English localization file for enUS
-local AceLocale = LibStub:GetLibrary("AceLocale-3.0");
-local L = AceLocale:NewLocale("ElvUI", "enUS");
-if not L then return; end
+local AceLocale = LibStub:GetLibrary("AceLocale-3.0")
+local L = AceLocale:NewLocale("ElvUI", "enUS")
+if not L then return end
 
 L["Adds 2 digits in the coords"] = true
 L["Adds 6 pixels at the Main Location Panel height."] = true
@@ -39,6 +39,7 @@ L["Enable/Disable the currencies, on Tooltip."] = true
 L["Enable/Disable the professions, on Tooltip."] = true
 L["Enable/Disable the Login Message"] = true
 L["Enable/Disable transparent layout."] = true
+L["Hide Blizzard Zone Text"] = true
 L["Hide capped"] = true
 L["Hide PvP"] = true
 L["Hide Raid"] = true

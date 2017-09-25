@@ -1,8 +1,8 @@
 ﻿--Файл локализации для ruRU
 --Credits: Darth Predator
-local AceLocale = LibStub:GetLibrary("AceLocale-3.0");
+local AceLocale = LibStub:GetLibrary("AceLocale-3.0")
 local L = AceLocale:NewLocale("ElvUI", "ruRU")
-if not L then return; end
+if not L then return end
 
 L["Adds 2 digits in the coords"] = "Добавляет сотые доли координат"
 L["Adds 6 pixels at the Main Location Panel height."] = "Увеличить высоту панели зоны на 6 пикселей."
@@ -39,6 +39,7 @@ L["Enable/Disable the coords for area dungeons and recommended dungeon entrances
 L["Enable/Disable the currencies, on Tooltip."] = "Enable/Disable the currencies, on Tooltip." -- Requires localization
 L["Enable/Disable the professions, on Tooltip."] = "Enable/Disable the professions, on Tooltip." -- Requires localization
 L["Enable/Disable transparent layout."] = "Включить/выключить прозрачность."
+L["Hide Blizzard Zone Text"] = true
 L["Hide capped"] = "Hide capped" -- Requires localization
 L["Hide PvP"] = "Прятать PvP"
 L["Hide Raid"] = "Прятать рейды"
