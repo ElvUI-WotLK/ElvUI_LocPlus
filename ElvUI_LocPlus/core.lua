@@ -39,13 +39,8 @@ LPB.version = GetAddOnMetadata("ElvUI_LocPlus", "Version")
 if E.db.locplus == nil then E.db.locplus = {} end
 
 do
-	if E.db.locplus.dtwidth then
-		DT:RegisterPanel(LeftCoordDtPanel, 1, "ANCHOR_BOTTOMLEFT", E.db.locplus.dtwidth, -4)
-		DT:RegisterPanel(RightCoordDtPanel, 1, "ANCHOR_BOTTOMRIGHT", -E.db.locplus.dtwidth, -4)
-	else
-		DT:RegisterPanel(LeftCoordDtPanel, 1, "ANCHOR_BOTTOMLEFT", 100, -4)
-		DT:RegisterPanel(RightCoordDtPanel, 1, "ANCHOR_BOTTOMRIGHT", -100, -4)
-	end
+	DT:RegisterPanel(LeftCoordDtPanel, 1, "ANCHOR_BOTTOM", 0, -4)
+	DT:RegisterPanel(RightCoordDtPanel, 1, "ANCHOR_BOTTOM", 0, -4)
 
 	L["RightCoordDtPanel"] = L["LocationPlus Right Panel"]
 	L["LeftCoordDtPanel"] = L["LocationPlus Left Panel"]
