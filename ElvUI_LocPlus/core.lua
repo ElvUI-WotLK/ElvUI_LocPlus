@@ -9,7 +9,7 @@ local tourist = LibStub("LibTourist-3.0")
 local format, tonumber, pairs, print = string.format, tonumber, pairs, print
 
 local CreateFrame = CreateFrame
-local ChatFrameEditBox = ChatFrameEditBox
+local ChatEdit_ChooseBoxForSend = ChatEdit_ChooseBoxForSend
 local GetBindLocation = GetBindLocation
 local GetCurrentMapAreaID = GetCurrentMapAreaID
 local GetMinimapZoneText = GetMinimapZoneText
@@ -365,7 +365,7 @@ local function LocPanel_OnClick(self, btn)
 	local zoneText = GetRealZoneText() or UNKNOWN
 	if btn == "LeftButton" then
 		if IsShiftKeyDown() then
-			local ChatFrameEditBox = ChatFrameEditBox
+			local edit_box = ChatEdit_ChooseBoxForSend();
 			local x, y = CreateCoords()
 			local message
 			local coords = x..", "..y
@@ -374,13 +374,8 @@ local function LocPanel_OnClick(self, btn)
 				else
 					message = format("%s (%s)", zoneText, coords)
 				end
-
-			if(not ChatFrameEditBox:IsShown()) then
-				ChatFrameEditBox:Show()
-				ChatEdit_UpdateHeader(ChatFrameEditBox)
-			end
-			ChatFrameEditBox:Insert(message)
-			ChatFrameEditBox:HighlightText()
+				ChatEdit_ActivateChat(edit_box);
+				edit_box:Insert(message);
 		else
 			if IsControlKeyDown() then
 				LeftCoordDtPanel:SetScript("OnShow", function(self) E.db.locplus.dtshow = true end)
