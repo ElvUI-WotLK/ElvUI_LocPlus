@@ -365,7 +365,7 @@ local function LocPanel_OnClick(self, btn)
 	local zoneText = GetRealZoneText() or UNKNOWN
 	if btn == "LeftButton" then
 		if IsShiftKeyDown() then
-			local edit_box = ChatEdit_ChooseBoxForSend();
+			local edit_box = ChatEdit_ChooseBoxForSend()
 			local x, y = CreateCoords()
 			local message
 			local coords = x..", "..y
@@ -374,8 +374,8 @@ local function LocPanel_OnClick(self, btn)
 				else
 					message = format("%s (%s)", zoneText, coords)
 				end
-				ChatEdit_ActivateChat(edit_box);
-				edit_box:Insert(message);
+				ChatEdit_ActivateChat(edit_box)
+				edit_box:Insert(message)
 		else
 			if IsControlKeyDown() then
 				LeftCoordDtPanel:SetScript("OnShow", function(self) E.db.locplus.dtshow = true end)
