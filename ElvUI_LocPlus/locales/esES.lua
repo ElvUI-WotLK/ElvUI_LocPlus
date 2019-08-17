@@ -1,4 +1,4 @@
-﻿local AceLocale = LibStub:GetLibrary("AceLocale-3.0")
+﻿local AceLocale = LibStub:GetLibrary("AceLocale-3.0-ElvUI")
 local L = AceLocale:NewLocale("ElvUI", "esES") or AceLocale:NewLocale("ElvUI", "esES")
 if not L then return end
 
