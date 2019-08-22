@@ -388,7 +388,7 @@ local function LocPanel_OnClick(self, btn)
 		end
 	end
 	if btn == "RightButton" then
-		E:ToggleConfig()
+		E:ToggleOptionsUI()
 	end
 end
 
